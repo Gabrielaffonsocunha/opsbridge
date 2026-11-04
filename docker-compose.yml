@@ -1,0 +1,22 @@
+services:
+  opsbridge:
+    build: .
+    container_name: opsbridge
+    environment:
+      OPSBRIDGE_DB_PATH: /data/opsbridge.db
+      OPSBRIDGE_WEBHOOK_TOKEN: ${OPSBRIDGE_WEBHOOK_TOKEN:?Defina OPSBRIDGE_WEBHOOK_TOKEN no arquivo .env}
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - opsbridge-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  opsbridge-data:
