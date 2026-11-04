@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>OpsBridge | Central de incidentes</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">OB</span><div><strong>OpsBridge</strong><small>Monitoramento → Incidente</small></div></div>
+      <div class="connection"><span class="dot"></span><span id="health-label">checando API</span></div>
+    </header>
+
+    <section class="intro">
+      <div><p class="eyebrow">CENTRAL DE OPERAÇÕES</p><h1>Incidentes em um só lugar.</h1><p class="lede">Alertas recebidos, deduplicados e organizados para facilitar a triagem.</p></div>
+      <button id="refresh" class="button secondary">Atualizar</button>
+    </section>
+
+    <section class="token-box" aria-label="Acesso à API">
+      <label for="token">Token de acesso</label>
+      <input id="token" type="password" autocomplete="off" placeholder="Cole o OPSBRIDGE_WEBHOOK_TOKEN">
+      <button id="save-token" class="button">Salvar token</button>
+      <span id="token-status" class="muted">O token fica salvo somente neste navegador.</span>
+    </section>
+
+    <section class="stats" aria-label="Resumo dos incidentes">
+      <article class="stat-card"><span>Em aberto</span><strong id="open-count">—</strong><small>precisam de acompanhamento</small></article>
+      <article class="stat-card"><span>Críticos</span><strong id="critical-count">—</strong><small>severidade crítica</small></article>
+      <article class="stat-card"><span>Resolvidos</span><strong id="resolved-count">—</strong><small>no histórico carregado</small></article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">FILA DE ATENDIMENTO</p><h2>Incidentes</h2></div>
+        <select id="status-filter" aria-label="Filtrar por status"><option value="all">Todos</option><option value="open">Em aberto</option><option value="resolved">Resolvidos</option></select></div>
+      <div id="message" class="message" role="status">Informe o token para carregar os incidentes.</div>
+      <div id="incident-list" class="incident-list"></div>
+    </section>
+    <footer>Dados do laboratório. Use exemplos fictícios e não envie informações internas.</footer>
+  </main>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
