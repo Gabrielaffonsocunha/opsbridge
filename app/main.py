@@ -31,9 +31,22 @@ def connect(db_path: str) -> sqlite3.Connection:
     return conn
 
 
+@contextmanager
+def session(db_path: str) -> Iterator[sqlite3.Connection]:
+    conn = connect(db_path)
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
 def initialize(db_path: str) -> None:
     Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-    with connect(db_path) as conn:
+    with session(db_path) as conn:
         conn.executescript(
             """
             CREATE TABLE IF NOT EXISTS incidents (
@@ -99,7 +112,7 @@ def normalize_alert(raw: dict[str, Any], source: str) -> dict[str, str]:
 
 def record_alert(db_path: str, alert: dict[str, str]) -> tuple[dict[str, Any], str]:
     timestamp = now_iso()
-    with connect(db_path) as conn:
+    with session(db_path) as conn:
         row = conn.execute(
             "SELECT * FROM incidents WHERE fingerprint = ?", (alert["fingerprint"],)
         ).fetchone()
@@ -223,7 +236,7 @@ def create_app(db_path: str | None = None, webhook_token: str | None = None) -> 
         authorize(authorization)
         if status not in {"all", "open", "resolved"}:
             raise HTTPException(status_code=422, detail="status deve ser all, open ou resolved")
-        with connect(database) as conn:
+        with session(database) as conn:
             query = "SELECT * FROM incidents"
             args: tuple[str, ...] = ()
             if status != "all":
@@ -236,7 +249,7 @@ def create_app(db_path: str | None = None, webhook_token: str | None = None) -> 
     @app.get("/api/incidents/{incident_id}/events")
     def list_events(incident_id: int, authorization: str | None = Header(default=None)) -> dict[str, Any]:
         authorize(authorization)
-        with connect(database) as conn:
+        with session(database) as conn:
             exists = conn.execute("SELECT id FROM incidents WHERE id=?", (incident_id,)).fetchone()
             if exists is None:
                 raise HTTPException(status_code=404, detail="Incidente não encontrado")
@@ -250,7 +263,7 @@ def create_app(db_path: str | None = None, webhook_token: str | None = None) -> 
     def resolve_incident(incident_id: int, authorization: str | None = Header(default=None)) -> dict[str, Any]:
         authorize(authorization)
         timestamp = now_iso()
-        with connect(database) as conn:
+        with session(database) as conn:
             row = conn.execute("SELECT * FROM incidents WHERE id=?", (incident_id,)).fetchone()
             if row is None:
                 raise HTTPException(status_code=404, detail="Incidente não encontrado")
