@@ -167,7 +167,7 @@ def record_alert(db_path: str, alert: dict[str, str]) -> tuple[dict[str, Any], s
 
 
 def create_app(db_path: str | None = None, webhook_token: str | None = None) -> FastAPI:
-    database = db_path or os.getenv("OPSBRIDGE_DB_PATH", "/data/opsbridge.db")
+    database = db_path or os.getenv("OPSBRIDGE_DB_PATH", str(BASE_DIR / "opsbridge.db"))
     token = webhook_token if webhook_token is not None else os.getenv("OPSBRIDGE_WEBHOOK_TOKEN", "")
     initialize(database)
     app = FastAPI(title="OpsBridge API", version="0.1.0", description="Monitoring alerts to incidents")
