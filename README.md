@@ -4,6 +4,12 @@
 
 > Projeto educacional com dados fictícios. A configuração foi pensada para execução local e não substitui uma plataforma de incidentes pronta para produção.
 
+## Prévia visual
+
+> Mockup ilustrativo com dados fictícios. Esta imagem não é uma captura de uma execução real da aplicação. Consulte a seção de execução para iniciar a API.
+
+![Prévia ilustrativa do painel de incidentes do OpsBridge](docs/assets/opsbridge-dashboard.svg)
+
 ## Problema
 
 Alertas repetidos podem dificultar a triagem e esconder o que ainda precisa de atenção. O OpsBridge recebe eventos em formatos de demonstração do Prometheus Alertmanager e do Zabbix, cria um incidente por fingerprint e registra as mudanças em uma linha do tempo.
